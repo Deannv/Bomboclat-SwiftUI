@@ -26,6 +26,7 @@ struct BombDuelApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .font(.custom("ARCADECLASSIC", size: 16))
         }
         .modelContainer(sharedModelContainer)
     }

@@ -29,9 +29,38 @@
 		040FBDBD2DDAC6F200B1884D /* BombDuelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BombDuelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0479E7932DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ARCADECLASSIC.ttf,
+			);
+			target = 040FBDB22DDAC6F200B1884D /* BombDuelTests */;
+		};
+		0479E7942DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ARCADECLASSIC.ttf,
+			);
+			target = 040FBDBC2DDAC6F200B1884D /* BombDuelUITests */;
+		};
+		0479E7962DDD53D800F1716B /* Exceptions for "BombDuel" folder in "BombDuel" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 040FBDA32DDAC6F100B1884D /* BombDuel */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		040FBDA62DDAC6F100B1884D /* BombDuel */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0479E7962DDD53D800F1716B /* Exceptions for "BombDuel" folder in "BombDuel" target */,
+				0479E7932DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelTests" target */,
+				0479E7942DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelUITests" target */,
+			);
 			path = BombDuel;
 			sourceTree = "<group>";
 		};
@@ -400,6 +429,7 @@
 				DEVELOPMENT_TEAM = 98Y6GRMSNC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BombDuel/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +458,7 @@
 				DEVELOPMENT_TEAM = 98Y6GRMSNC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BombDuel/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

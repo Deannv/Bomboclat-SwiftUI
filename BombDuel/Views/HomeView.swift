@@ -19,8 +19,8 @@ struct HomeView: View {
         NavigationView {
             VStack(spacing: 20) {
                 Text("Bomboclat")
-                    .font(.largeTitle)
-                    .bold()
+                    .font(.custom("ARCADECLASSIC", size: 24))
+                    
                 
                 VStack {
                     Text("Player 1")
