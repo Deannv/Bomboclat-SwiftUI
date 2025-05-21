@@ -9,7 +9,14 @@ import SwiftUI
 
 struct Detail: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack(alignment: .top)
+        {
+            Image("onboarding2")
+                .resizable()
+                .frame(width: 270, height: 300)
+                .padding(.top, -200)
+        }
+        .ignoresSafeArea()
     }
 }
 
