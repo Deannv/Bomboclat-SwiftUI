@@ -10,10 +10,14 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
+    
     var body: some View {
-        Onboarding()
+        if hasSeenOnboarding {
+            HomeView()
+        }else{
+            Onboarding()
+        }
     }
 }
 

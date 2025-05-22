@@ -9,6 +9,8 @@ import SwiftUI
 
 struct Onboarding: View {
     @State private var currentIndex = 0
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
+    
     var titles = [
         "Pass  the  bomb.",
         "Watch  the  cooldown!",
@@ -64,7 +66,11 @@ struct Onboarding: View {
                                 HomeView()
                                     .navigationBarBackButtonHidden(true)
                             } label: {
-                                CircleButtonVisual(size: 25, label: "Start")
+                                Button{
+                                    hasSeenOnboarding = true
+                                }label: {
+                                    CircleButtonVisual(size: 25, label: "Start")
+                                }
                             }
                         }
                     }

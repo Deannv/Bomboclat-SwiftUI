@@ -15,8 +15,8 @@ struct GameView: View {
     @State private var isPaused = false
     @State private var isMuted = false
     @State private var winnerPlayer: Player? = nil
+    @StateObject private var gameLogic = GameLogicViewModel()
 
-    // Computed Propertieis
     private var scene: SKScene {
         let scene = BombGameScene(size: UIScreen.main.bounds.size)
         scene.scaleMode = .resizeFill
@@ -26,15 +26,6 @@ struct GameView: View {
     }
 
     var body: some View {
-        if let winner = winnerPlayer {
-            GameOverView(winner: winner) {
-                winnerPlayer = nil
-                // Reset logic (recreate scene)
-            } onExit: {
-                presentationMode.wrappedValue.dismiss()
-            }
-        }
-
         ZStack {
             SpriteView(scene: scene)
                 .ignoresSafeArea()
@@ -55,50 +46,80 @@ struct GameView: View {
                     Button("Pause") {
                         isPaused = true
                         scene.isPaused = true
+                        gameLogic.stop()
                     }
                     .padding()
                 }
 
                 Spacer()
 
+                if gameLogic.showBombTimer {
+                    Text("💣 \(gameLogic.bombTimer)")
+                        .font(.largeTitle)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(12)
+                }
+
+                Spacer()
+
                 HStack {
                     VStack {
-                        Button("Pass Bomb") {
+                        Text("❤️ \(gameLogic.p1Hearts)")
+                        Button(action: {
+                            gameLogic.passBomb()
                             NotificationCenter.default.post(name: .passBombP1, object: nil)
+                        }) {
+                            Text(gameLogic.canPass(for: 1)
+                                 ? "Pass Bomb"
+                                 : "Cooldown \(gameLogic.passCooldown)")
                         }
+                        .disabled(!gameLogic.canPass(for: 1) || isPaused || gameLogic.showExplosionModal)
                         .padding()
 
                         Button("Effect") {
                             NotificationCenter.default.post(name: .effectP1, object: nil)
                         }
+                        .disabled(isPaused || gameLogic.bombHolder != 1 || gameLogic.showExplosionModal)
                         .padding()
                     }
 
                     Spacer()
 
                     VStack {
-                        Button("Pass Bomb") {
+                        Text("❤️ \(gameLogic.p2Hearts)")
+                        Button(action: {
+                            gameLogic.passBomb()
                             NotificationCenter.default.post(name: .passBombP2, object: nil)
+                        }) {
+                            Text(gameLogic.canPass(for: 2)
+                                 ? "Pass Bomb"
+                                 : "Cooldown \(gameLogic.passCooldown)")
                         }
+                        .disabled(!gameLogic.canPass(for: 2) || isPaused || gameLogic.showExplosionModal)
                         .padding()
 
                         Button("Effect") {
                             NotificationCenter.default.post(name: .effectP2, object: nil)
                         }
+                        .disabled(isPaused || gameLogic.bombHolder != 2 || gameLogic.showExplosionModal)
                         .padding()
                     }
                 }
                 .padding()
             }
 
+            // Pause Modal
             if isPaused {
                 VStack {
-                    Text("Paused")
-                        .font(.largeTitle)
+                    Text("Paused").font(.largeTitle)
                     Button("Resume") {
                         isPaused = false
                         scene.isPaused = false
-                    }
+                        gameLogic.startBombTimer()
+                    }.padding()
+
                     Button("Exit") {
                         presentationMode.wrappedValue.dismiss()
                     }
@@ -107,8 +128,34 @@ struct GameView: View {
                 .background(Color.black.opacity(0.8))
                 .cornerRadius(10)
             }
+
+            // Explosion Modal
+            if gameLogic.showExplosionModal {
+                VStack {
+                    Text(gameLogic.explodedPlayerName)
+                        .font(.largeTitle)
+                        .padding()
+                    Button("Continue") {
+                        gameLogic.continueAfterExplosion()
+                    }
+                }
+                .padding()
+                .background(Color.red.opacity(0.85))
+                .cornerRadius(12)
+            }
+
+            // Game Over Modal
+            if let winner = winnerPlayer {
+                GameOverView(winner: winner) {
+                    winnerPlayer = nil
+                    gameLogic.stop()
+                } onExit: {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
         }
         .onAppear {
+            gameLogic.startGame()
             NotificationCenter.default.addObserver(forName: .gameOver, object: nil, queue: .main) { notification in
                 if let winnerNum = notification.object as? Int {
                     let winner = winnerNum == 1 ? player1 : player2
@@ -117,10 +164,11 @@ struct GameView: View {
                 }
             }
         }
-
+        .onDisappear {
+            gameLogic.stop()
+        }
     }
 }
-
 
 #Preview {
 //    GameView()
