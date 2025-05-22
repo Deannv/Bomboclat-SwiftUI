@@ -13,8 +13,8 @@ struct CharacterSelectionView: View {
 
     let characters: [Character] = [
         Character(name: "Bomber", imageName: "bomber", unlockTrophy: 0),
-        Character(name: "Ninja", imageName: "ninja", unlockTrophy: 3),
-        Character(name: "Knight", imageName: "knight", unlockTrophy: 5)
+        Character(name: "Ninja", imageName: "ninja", unlockTrophy: 0),
+        Character(name: "Knight", imageName: "knight", unlockTrophy: 0)
         // Add more if needed
     ]
 

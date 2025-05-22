@@ -29,14 +29,12 @@ struct AdrianHomeView: View {
                 Spacer()
                     .frame(height: 80)
                 CharacterView()
-                
-                
-                SelectorView(options: ["Angel", "Farid","Adrian"]) { index in
-                    print("Selected index: \(index)")
-                }
-                
-                Spacer()
-                    .frame(height: 30)
+//
+//
+//                Spacer()
+//                    .frame(height: 30)
+//
+
                 
                 ContinueButton(action: { print("Button tapped!") }, label: "CONTINUE")
                 
@@ -49,51 +47,67 @@ struct AdrianHomeView: View {
 
 struct CharacterView: View {
     @State private var selectedIndex = 0
-    @State private var selectedCharacter = "Angel"
+    @State private var selectedCharacterIndex = 0
+    @State private var selectedIndex2 = 0
+
     let options = ["Single", "Double"]
+    let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan"]
+
+    var selectedCharacter: String {
+        characterOptions[selectedCharacterIndex]
+    }
 
     var body: some View {
         VStack {
             // Character images
             ZStack {
-                // Selected character
                 Image(selectedCharacter)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 350, height: 350)
                     .offset(x: selectedIndex == 1 ? -90 : 0)
                     .scaleEffect(selectedIndex == 1 ? 0.85 : 1.0)
-//                    .shadow(color: .yellow, radius: selectedIndex == 1 ? 20 : 10)
                     .animation(.spring(response: 0.4, dampingFraction: 0.4), value: selectedIndex)
 
-                // Kemas
+                // ? character
                 if selectedIndex == 1 {
-                    Image("Kemas")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 350, height: 350)
-                        .transition(
-                            .asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .trailing).combined(with: .opacity)
-                                   
+                    VStack {
+                        Image("DefaultChara")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 350, height: 350)
+                            .transition(
+                                .asymmetric(
+                                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                                    removal: .move(edge: .trailing).combined(with: .opacity)
+                                )
                             )
-                        )
-                        .scaleEffect(selectedIndex == 1 ? 0.85 : 1.0)//                        .shadow(color: .yellow, radius: 20)
-                        .animation(.spring(response: 0.6, dampingFraction: 0.1), value: selectedIndex)
-                        .offset(x: 90)
+                            .scaleEffect(0.85)
+                            .animation(.spring(response: 0.6, dampingFraction: 0.1), value: selectedIndex) // animations doesnt work
+                            .offset(x: 90)
+                        
+                    }
+                    .transition(.move(edge: .trailing).combined(with: .opacity)) // doesnt work
+                    .animation(.easeInOut(duration: 0.5), value: selectedIndex) // doesnt work
                 }
+
             }
 
-            .frame(width: 700, height: 350)
-            .clipped()
-            Spacer()
-                .frame(height: 70)
+            Spacer().frame(height: 30)
 
-            // Selector for Single/Double
-            SelectorView(options: options) { index in
-                withAnimation(.spring()) {
-                    selectedIndex = index
+            // Single / Double selector
+            SelectorView(options: options, currentIndex: $selectedIndex) { index in
+                print("Selected mode: \(options[index])")
+            }
+
+            // Dynamic selector
+            if selectedIndex == 1 {
+                SelectorView(options: ["CPU", "PvP"], currentIndex: $selectedIndex2) { index in
+                    print("Selected index: \(index)")
+                }
+            } else {
+                SelectorView(options: characterOptions, currentIndex: $selectedCharacterIndex) { index in
+                    print("Selected character: \(characterOptions[index])")
                 }
             }
         }
@@ -101,16 +115,11 @@ struct CharacterView: View {
 }
 
 
+
 struct SelectorView: View {
     let options: [String]
-    @State private var currentIndex: Int
+    @Binding var currentIndex: Int
     var onSelectionChanged: ((Int) -> Void)?
-
-    init(options: [String], initialIndex: Int = 0, onSelectionChanged: ((Int) -> Void)? = nil) {
-        self.options = options
-        self._currentIndex = State(initialValue: min(initialIndex, options.count - 1))
-        self.onSelectionChanged = onSelectionChanged
-    }
 
     var body: some View {
         HStack {
@@ -143,6 +152,7 @@ struct SelectorView: View {
         }
     }
 }
+
 
 
 struct ContinueButton: View {
