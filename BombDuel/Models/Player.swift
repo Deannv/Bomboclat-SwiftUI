@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Player {
+struct Player: Identifiable {
+    let id = UUID()
     var name: String
     var selectedCharacter: Character
     var lives: Int = 3
-    var hasUsedEffect: Bool = false
 }
