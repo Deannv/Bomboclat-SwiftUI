@@ -29,11 +29,11 @@ struct AdrianHomeView: View {
                 Spacer()
                     .frame(height: 80)
                 CharacterView()
-//
+
 //
 //                Spacer()
 //                    .frame(height: 30)
-//
+
 
                 
                 ContinueButton(action: { print("Button tapped!") }, label: "CONTINUE")

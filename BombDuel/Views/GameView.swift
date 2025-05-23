@@ -15,7 +15,7 @@ struct GameView: View {
     @State private var isPaused = false
     @State private var isMuted = false
     @State private var winnerPlayer: Player? = nil
-    @StateObject private var gameLogic = GameLogicViewModel()
+    @StateObject private var gameLogic: GameLogicViewModel
 
     private var scene: SKScene {
         let scene = BombGameScene(size: UIScreen.main.bounds.size)
@@ -23,6 +23,12 @@ struct GameView: View {
         scene.player1 = player1
         scene.player2 = player2
         return scene
+    }
+
+    init(player1: Player, player2: Player) {
+        self.player1 = player1
+        self.player2 = player2
+        _gameLogic = StateObject(wrappedValue: GameLogicViewModel(characterOne: player1.selectedCharacter, characterTwo: player2.selectedCharacter))
     }
 
     var body: some View {
@@ -69,19 +75,19 @@ struct GameView: View {
                         Text("❤️ \(gameLogic.p1Hearts)")
                         Button(action: {
                             gameLogic.passBomb()
-                            NotificationCenter.default.post(name: .passBombP1, object: nil)
+                            // No need to post notification, logic is centralized
                         }) {
                             Text(gameLogic.canPass(for: 1)
                                  ? "Pass Bomb"
-                                 : "Cooldown \(gameLogic.passCooldown)")
+                                 : "Cooldown \(gameLogic.passCooldownPlayerOne)")
                         }
                         .disabled(!gameLogic.canPass(for: 1) || isPaused || gameLogic.showExplosionModal)
                         .padding()
 
                         Button("Effect") {
-                            NotificationCenter.default.post(name: .effectP1, object: nil)
+                            gameLogic.useEffect(player: 1)
                         }
-                        .disabled(isPaused || gameLogic.bombHolder != 1 || gameLogic.showExplosionModal)
+                        .disabled(isPaused || gameLogic.bombHolder != 1 || gameLogic.showExplosionModal || gameLogic.p1EffectUsed)
                         .padding()
                     }
 
@@ -91,19 +97,18 @@ struct GameView: View {
                         Text("❤️ \(gameLogic.p2Hearts)")
                         Button(action: {
                             gameLogic.passBomb()
-                            NotificationCenter.default.post(name: .passBombP2, object: nil)
                         }) {
                             Text(gameLogic.canPass(for: 2)
                                  ? "Pass Bomb"
-                                 : "Cooldown \(gameLogic.passCooldown)")
+                                 : "Cooldown \(gameLogic.passCooldownPlayerTwo)")
                         }
                         .disabled(!gameLogic.canPass(for: 2) || isPaused || gameLogic.showExplosionModal)
                         .padding()
 
                         Button("Effect") {
-                            NotificationCenter.default.post(name: .effectP2, object: nil)
+                            gameLogic.useEffect(player: 2)
                         }
-                        .disabled(isPaused || gameLogic.bombHolder != 2 || gameLogic.showExplosionModal)
+                        .disabled(isPaused || gameLogic.bombHolder != 2 || gameLogic.showExplosionModal || gameLogic.p2EffectUsed)
                         .padding()
                     }
                 }
@@ -167,8 +172,19 @@ struct GameView: View {
         .onDisappear {
             gameLogic.stop()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .updateHearts)) { notif in
+            if let data = notif.object as? [Int: Int] {
+                if let newLives = data[1] { self.gameLogic.p1Hearts = newLives }
+                if let newLives = data[2] { self.gameLogic.p2Hearts = newLives }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .effectReset)) { _ in
+            gameLogic.p1EffectUsed = false
+            gameLogic.p2EffectUsed = false
+        }
     }
 }
+
 
 #Preview {
 //    GameView()
