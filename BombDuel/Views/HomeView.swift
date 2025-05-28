@@ -16,7 +16,7 @@ struct HomeView: View {
     @State private var navigateToGame = false
 
     let options = ["Single", "Double"]
-    let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan"]
+    let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan", "Charlie", "Emma", "Frea"]
 
     var body: some View {
         NavigationStack {
