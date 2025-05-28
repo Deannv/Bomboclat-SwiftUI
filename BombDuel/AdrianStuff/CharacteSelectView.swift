@@ -16,7 +16,7 @@ struct CharacteSelectView: View {
     @State private var selectedCharacterIndex2 = 0 // Player 2 character
     @State private var navigateToGame = false
 
-    let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan"]
+    let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan", "Charlie", "Emma", "Frea"]
 
     var body: some View {
         ZStack{
@@ -49,9 +49,16 @@ struct CharacteSelectView: View {
             )
             .offset(x: 0, y: 170)
 
-            ContinueButton(action: {
+            Button(action: {
                 navigateToGame = true
-            }, label: "CONTINUE")
+            }) {
+                Image("Next Button")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120) // Adjust size as needed
+            }
+            .buttonStyle(PlainButtonStyle()) // Optional: removes default button highlight
+
             .offset(x: 0, y: 350)
         }
     }

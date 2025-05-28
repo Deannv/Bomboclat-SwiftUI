@@ -73,11 +73,18 @@ struct HomeView: View {
                  
                     
                     Spacer()
-                        .frame(height: 50)
+                        .frame(height: 0)
                     // Continue button
-                    ContinueButton(action: {
+                    Button(action: {
                         navigateToGame = true
-                    }, label: "CONTINUE")
+                    }) {
+                        Image("Next Button")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 130, height: 130) // Adjust size as needed
+                    }
+                    .buttonStyle(PlainButtonStyle()) // Optional: removes default button highlight
+
                 }
                 .padding()
                 // Modern navigation destination with safe fallback for preview
