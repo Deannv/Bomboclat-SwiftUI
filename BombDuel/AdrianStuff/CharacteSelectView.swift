@@ -8,54 +8,57 @@
 import SwiftUI
 
 struct CharacteSelectView: View {
+    // Separate state for each player
     @State private var player1Character: Character?
     @State private var player2Character: Character?
     @State private var selectedIndex = 0 // Single or Double mode
     @State private var selectedCharacterIndex1 = 0 // Player 1 character
-    @State private var selectedCharacterIndex2 = 0 // Player 2 character or CPU/PvP
+    @State private var selectedCharacterIndex2 = 0 // Player 2 character
     @State private var navigateToGame = false
+
     let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan"]
+
     var body: some View {
         ZStack{
             BackGroundImg()
-            
-                            Image("Back-Button")
-                                .resizable()
-                                .frame(width: 31, height: 31)
-                                .offset(x: -160, y: -330)
-            
+            Image("Back-Button")
+                .resizable()
+                .frame(width: 31, height: 31)
+                .offset(x: -160, y: -330)
+
+            // Player 1 selector (top)
             CharacterViewForSelectScreen(
                 selectedIndex: $selectedIndex,
-                selectedCharacterIndex: $selectedCharacterIndex1,
+                selectedCharacterIndex: $selectedCharacterIndex1, // <- Player 1 index
                 characterOptions: characterOptions,
                 selectedCharacter: $player1Character,
                 imageSize: CGSize(width: 200, height: 200)
-                
             )
             .scaleEffect(x: -1, y: -1)
             .offset(x: 0, y: -200)
-            
+
             Seperator(imageName: "TrainTracks")
-            
+
+            // Player 2 selector (bottom)
             CharacterViewForSelectScreen(
                 selectedIndex: $selectedIndex,
-                selectedCharacterIndex: $selectedCharacterIndex1,
+                selectedCharacterIndex: $selectedCharacterIndex2, // <- Player 2 index
                 characterOptions: characterOptions,
-                selectedCharacter: $player1Character,
+                selectedCharacter: $player2Character,
                 imageSize: CGSize(width: 200, height: 200)
-                
             )
             .offset(x: 0, y: 170)
-            
+
             ContinueButton(action: {
                 navigateToGame = true
             }, label: "CONTINUE")
             .offset(x: 0, y: 350)
         }
-        
-
     }
 }
+
+// The rest of your code (CharacterViewForSelectScreen, CharacterCard, etc.) stays the same!
+
 
 
 struct CharacterViewForSelectScreen: View {
