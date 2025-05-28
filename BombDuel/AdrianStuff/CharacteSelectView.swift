@@ -37,7 +37,7 @@ struct CharacteSelectView: View {
             .scaleEffect(x: -1, y: -1)
             .offset(x: 0, y: -200)
 
-            Seperator(imageName: "TrainTracks")
+//            Seperator(imageName: "TrainTracks")
 
             // Player 2 selector (bottom)
             CharacterViewForSelectScreen(
