@@ -20,8 +20,8 @@ struct AdrianGameplayView: View {
                 .scaledToFit()
                 .offset(x: -90, y: 200)
             
-            TrainTrackView()
-            
+            Seperator(imageName: "TrainTracks")
+
          
                 HeartsView(count: 3)
                     .offset(x: 0, y: 350)
@@ -73,23 +73,33 @@ struct AdrianGameplayView: View {
 }
 
 
-struct TrainTrackView: View {
-    let imageWidth: CGFloat = 25 // Set this to your actual image width
-    let screenWidth = UIScreen.main.bounds.width
-    let imageCount: Int // Number of images needed to cover the screen
+struct Seperator: View {
+    let imageWidth: CGFloat
+    let screenWidth: CGFloat
+    let imageCount: Int
+    let imageName: String?
 
-    init() {
-        // Calculate how many images are needed to cover the screen
+    init(imageWidth: CGFloat = 25, imageName: String? = nil) {
+        self.imageWidth = imageWidth
+        self.screenWidth = UIScreen.main.bounds.width
         self.imageCount = Int(ceil(screenWidth / imageWidth)) + 3
+        self.imageName = imageName
     }
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(0..<imageCount, id: \.self) { _ in
-                Image("TrainTracks")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: imageWidth)
+                if let imageName = imageName {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: imageWidth)
+                } else {
+                    // Default: Black bar
+                    Rectangle()
+                        .fill(Color.black)
+                        .frame(width: imageWidth, height: 2)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -21,19 +21,8 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background color
-                Color(red: 0.99, green: 0.49, blue: 0.02)
-                    .ignoresSafeArea(edges: .all)
-                
-                // Cloud images
-                Image("blur-cloud")
-                    .scaledToFit()
-                    .offset(x: 0, y: -200)
-                
-                Image("blur-cloud")
-                    .scaledToFit()
-                    .offset(x: -90, y: 200)
-                
+                BackGroundImg()
+
                 // Back button image (non-functional)
 //                Image("Back-Button")
 //                    .resizable()
@@ -106,16 +95,49 @@ struct HomeView: View {
     }
 }
 
+struct BackGroundImg: View {
+    var body: some View {
+        // Background color
+        Color(red: 0.99, green: 0.49, blue: 0.02)
+            .ignoresSafeArea(edges: .all)
+        
+        // Cloud images
+        Image("blur-cloud")
+            .scaledToFit()
+            .offset(x: 0, y: -200)
+        
+        Image("blur-cloud")
+            .scaledToFit()
+            .offset(x: -90, y: 200)
+
+    }
+
+}
+
 struct CharacterView: View {
     @Binding var selectedIndex: Int
     @Binding var selectedCharacterIndex: Int
     let characterOptions: [String]
     @Binding var selectedCharacter: Character?
-    
+    let imageSize: CGSize // <-- New parameter
+
+    // Default initializer with default size
+    init(selectedIndex: Binding<Int>,
+         selectedCharacterIndex: Binding<Int>,
+         characterOptions: [String],
+         selectedCharacter: Binding<Character?>,
+         imageSize: CGSize = CGSize(width: 350, height: 350)) {
+        self._selectedIndex = selectedIndex
+        self._selectedCharacterIndex = selectedCharacterIndex
+        self.characterOptions = characterOptions
+        self._selectedCharacter = selectedCharacter
+        self.imageSize = imageSize
+    }
+
     var currentCharacter: String {
         characterOptions[selectedCharacterIndex]
     }
-    
+
     var body: some View {
         VStack {
             // Character images
@@ -123,7 +145,7 @@ struct CharacterView: View {
                 Image(currentCharacter)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 350, height: 350)
+                    .frame(width: imageSize.width, height: imageSize.height) // <-- Use imageSize
                     .offset(x: selectedIndex == 1 ? -90 : 0)
                     .scaleEffect(selectedIndex == 1 ? 0.75 : 1.0)
                     .animation(.spring(response: 0.4, dampingFraction: 0.4), value: selectedIndex)
@@ -133,7 +155,7 @@ struct CharacterView: View {
                     Image("DefaultChara")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 350, height: 350)
+                        .frame(width: imageSize.width, height: imageSize.height) // <-- Use imageSize
                         .transition(
                             .asymmetric(
                                 insertion: .move(edge: .trailing).combined(with: .opacity),
@@ -142,10 +164,9 @@ struct CharacterView: View {
                         )
                         .scaleEffect(0.75)
                         .offset(x: 90)
-                       
                 }
             }
-            .animation(.spring(response: 0.4, dampingFraction: 0.6), value: selectedIndex) // <-- This is key!
+            .animation(.spring(response: 0.4, dampingFraction: 0.6), value: selectedIndex)
 
             Spacer().frame(height: 30)
             
@@ -159,6 +180,7 @@ struct CharacterView: View {
         }
     }
 }
+
 
 
 struct SelectorView: View {
