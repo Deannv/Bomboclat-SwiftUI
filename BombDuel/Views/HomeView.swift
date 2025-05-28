@@ -21,25 +21,14 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background color
-                Color(red: 0.99, green: 0.49, blue: 0.02)
-                    .ignoresSafeArea(edges: .all)
-                
-                // Cloud images
-                Image("blur-cloud")
-                    .scaledToFit()
-                    .offset(x: 0, y: -200)
-                
-                Image("blur-cloud")
-                    .scaledToFit()
-                    .offset(x: -90, y: 200)
-                
+                BackGroundImg()
+
                 // Back button image (non-functional)
-                Image("Back-Button")
-                    .resizable()
-                    .frame(width: 31, height: 31)
-                    .offset(x: -160, y: -330)
-                
+//                Image("Back-Button")
+//                    .resizable()
+//                    .frame(width: 31, height: 31)
+//                    .offset(x: -160, y: -330)
+//
                 // Main content
                 VStack {
                     Spacer()
@@ -63,28 +52,7 @@ struct HomeView: View {
                         )
                     }
                     
-                    // Player 2 character selection (only in Double mode)
-                    if selectedIndex == 1 {
-                        VStack {
-                            Text("Player 2")
-                                .font(.custom("ARCADECLASSIC", size: 20))
-                                .foregroundColor(.white)
-                            
-                            CharacterView(
-                                selectedIndex: $selectedIndex,
-                                selectedCharacterIndex: $selectedCharacterIndex2,
-                                characterOptions: characterOptions,
-                                selectedCharacter: $player2Character
-                            )
-                        }
-                    }
                     
-                    // Single/Double selector
-                    SelectorView(options: options, currentIndex: $selectedIndex) { index in
-                        print("Selected mode: \(options[index])")
-                        player2Character = nil
-                        selectedCharacterIndex2 = 0
-                    }
                     
                     // CPU/PvP selector for Double mode
                     if selectedIndex == 1 {
@@ -93,12 +61,30 @@ struct HomeView: View {
                         }
                     }
                     
-                    // Continue button
-                    if (selectedIndex == 0 && player1Character != nil) || (selectedIndex == 1 && player1Character != nil && player2Character != nil) {
-                        ContinueButton(action: {
-                            navigateToGame = true
-                        }, label: "CONTINUE")
+
+                    
+                    // Single/Double selector
+                    SelectorView(options: options, currentIndex: $selectedIndex) { index in
+                        print("Selected mode: \(options[index])")
+                        player2Character = nil
+                        selectedCharacterIndex2 = 0
                     }
+                    
+                 
+                    
+                    Spacer()
+                        .frame(height: 0)
+                    // Continue button
+                    Button(action: {
+                        navigateToGame = true
+                    }) {
+                        Image("Next Button")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 130, height: 130) // Adjust size as needed
+                    }
+                    .buttonStyle(PlainButtonStyle()) // Optional: removes default button highlight
+
                 }
                 .padding()
                 // Modern navigation destination with safe fallback for preview
@@ -116,11 +102,44 @@ struct HomeView: View {
     }
 }
 
+struct BackGroundImg: View {
+    var body: some View {
+        // Background color
+        Color(red: 0.99, green: 0.49, blue: 0.02)
+            .ignoresSafeArea(edges: .all)
+        
+        // Cloud images
+        Image("blur-cloud")
+            .scaledToFit()
+            .offset(x: 0, y: -200)
+        
+        Image("blur-cloud")
+            .scaledToFit()
+            .offset(x: -90, y: 200)
+
+    }
+
+}
+
 struct CharacterView: View {
     @Binding var selectedIndex: Int
     @Binding var selectedCharacterIndex: Int
     let characterOptions: [String]
     @Binding var selectedCharacter: Character?
+    let imageSize: CGSize // <-- New parameter
+
+    // Default initializer with default size
+    init(selectedIndex: Binding<Int>,
+         selectedCharacterIndex: Binding<Int>,
+         characterOptions: [String],
+         selectedCharacter: Binding<Character?>,
+         imageSize: CGSize = CGSize(width: 350, height: 350)) {
+        self._selectedIndex = selectedIndex
+        self._selectedCharacterIndex = selectedCharacterIndex
+        self.characterOptions = characterOptions
+        self._selectedCharacter = selectedCharacter
+        self.imageSize = imageSize
+    }
 
     var currentCharacter: String {
         characterOptions[selectedCharacterIndex]
@@ -133,39 +152,43 @@ struct CharacterView: View {
                 Image(currentCharacter)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 350, height: 350)
+                    .frame(width: imageSize.width, height: imageSize.height) // <-- Use imageSize
                     .offset(x: selectedIndex == 1 ? -90 : 0)
-                    .scaleEffect(selectedIndex == 1 ? 0.85 : 1.0)
+                    .scaleEffect(selectedIndex == 1 ? 0.75 : 1.0)
                     .animation(.spring(response: 0.4, dampingFraction: 0.4), value: selectedIndex)
-
-                // ? character for Player 2 in Double mode
+                
+                // Player 2 character
                 if selectedIndex == 1 {
                     Image("DefaultChara")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 350, height: 350)
+                        .frame(width: imageSize.width, height: imageSize.height) // <-- Use imageSize
                         .transition(
                             .asymmetric(
                                 insertion: .move(edge: .trailing).combined(with: .opacity),
                                 removal: .move(edge: .trailing).combined(with: .opacity)
                             )
                         )
-                        .scaleEffect(0.85)
-                        .animation(.spring(response: 0.6, dampingFraction: 0.1), value: selectedIndex)
+                        .scaleEffect(0.75)
                         .offset(x: 90)
                 }
             }
+            .animation(.spring(response: 0.4, dampingFraction: 0.6), value: selectedIndex)
 
             Spacer().frame(height: 30)
-
+            
             // Character selector
-            SelectorView(options: characterOptions, currentIndex: $selectedCharacterIndex) { index in
-                print("Selected character: \(characterOptions[index])")
-                selectedCharacter = Character(name: characterOptions[index], imageName: characterOptions[index], unlockTrophy: 0)
+            if selectedIndex == 0 {
+                SelectorView(options: characterOptions, currentIndex: $selectedCharacterIndex) { index in
+                    print("Selected character: \(characterOptions[index])")
+                    selectedCharacter = Character(name: characterOptions[index], imageName: characterOptions[index], unlockTrophy: 0)
+                }
             }
         }
     }
 }
+
+
 
 struct SelectorView: View {
     let options: [String]
@@ -181,9 +204,10 @@ struct SelectorView: View {
             } label: {
                 Image("arrow-left-svg")
                     .resizable()
-                    .frame(width: 55, height: 55)
+                    .frame(width: 35, height: 35)
             }
             .buttonStyle(PlainButtonStyle())
+            .padding(.trailing, 10)
 
             // Current selection
             Text(options[currentIndex])
@@ -197,11 +221,11 @@ struct SelectorView: View {
             } label: {
                 Image("arrow-right-svg")
                     .resizable()
-                    .frame(width: 55, height: 55)
+                    .frame(width: 35, height: 35)
             }
             .buttonStyle(PlainButtonStyle())
-        }
-    }
+            .padding(.leading, 10)
+        }    }
 }
 
 struct ContinueButton: View {
