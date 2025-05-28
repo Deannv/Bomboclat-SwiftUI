@@ -135,6 +135,7 @@ class GameLogicViewModel: ObservableObject {
                 p1Hearts -= 1
                 checkGameOver()
             }
+            print("effect clicked p1")
             NotificationCenter.default.post(name: .updateHearts, object: [1: p1Hearts])
         } else {
             p2EffectUsed = true
@@ -144,6 +145,7 @@ class GameLogicViewModel: ObservableObject {
                 p2Hearts -= 1
                 checkGameOver()
             }
+            print("effect clicked p2")
             NotificationCenter.default.post(name: .updateHearts, object: [2: p2Hearts])
         }
     }
@@ -151,10 +153,10 @@ class GameLogicViewModel: ObservableObject {
     func handleExplosion() {
         if bombHolder == 1 {
             p1Hearts -= 1
-            explodedPlayerName = "💥 \(bombHolderName() ?? "Unknown") exploded!"
+            explodedPlayerName = "💥 \(bombHolderName() ?? "Unknown")"
         } else {
             p2Hearts -= 1
-            explodedPlayerName = "💥 \(bombHolderName() ?? "Unknown") exploded!"
+            explodedPlayerName = "💥 \(bombHolderName() ?? "Unknown")"
         }
         NotificationCenter.default.post(name: .updateHearts, object: [1: p1Hearts, 2: p2Hearts])
         showExplosionModal = true
