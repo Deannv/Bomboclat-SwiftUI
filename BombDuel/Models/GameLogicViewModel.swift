@@ -60,7 +60,7 @@ class GameLogicViewModel: ObservableObject {
     }
 
     func startBombTimer() {
-        bombTimer = Int.random(in: 10...15)
+        bombTimer = bombTimer < 1 ? Int.random(in: 10...15) : bombTimer
         bombStartTime = Date()
         showBombTimer = true
 
@@ -112,9 +112,14 @@ class GameLogicViewModel: ObservableObject {
     func checkGameOver() {
         if p1Hearts <= 0 {
             NotificationCenter.default.post(name: .gameOver, object: 2) // Player 2 wins
+            
         } else if p2Hearts <= 0 {
             NotificationCenter.default.post(name: .gameOver, object: 1) // Player 1 wins
         }
+    }
+    
+    func endGame(winner: Int) {
+        NotificationCenter.default.post(name: .gameOver, object: winner)
     }
 
 
