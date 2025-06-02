@@ -52,7 +52,7 @@ struct GameView: View {
                     .rotationEffect(.degrees(180))
 
                 Spacer()
-
+                
                 Image("bomb")
                     .resizable()
                     .scaledToFit()
@@ -63,10 +63,36 @@ struct GameView: View {
                     .animation(.easeInOut(duration: 0.3), value: bombPosition)
                     .zIndex(99)
 
+//                if gameLogic.bombTimer > 4 {
+//                    Image("bomb")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 100, height: 100)
+//                        .scaleEffect(bombScale)
+//                        .rotationEffect(.degrees(bombRotation))
+//                        .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
+//                        .animation(.easeInOut(duration: 0.3), value: bombPosition)
+//                        .zIndex(99)
+//                }else{
+//                    GifImageView("bomb-flash")
+//                        .scaledToFit()
+//                        .frame(width: 100, height: 100)
+//                        .scaleEffect(bombScale)
+//                        .rotationEffect(.degrees(bombRotation))
+//                        .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
+//                        .animation(.easeInOut(duration: 0.3), value: bombPosition)
+//                        .zIndex(99)
+//                }
+//                    
+
                 Spacer()
 
                 PlayerView(player: player1, isFlipped: false)
                     .offset(y: -70)
+            }
+            
+            if gameLogic.showBombTimer {
+                BombTimerIndicators(bombTimer: gameLogic.bombTimer)
             }
 
             TrainTrackView()
@@ -88,7 +114,7 @@ struct GameView: View {
         .onReceive(NotificationCenter.default.publisher(for: .bombHolderChanged)) { notification in
             if let holder = notification.object as? Int {
                 withAnimation {
-                    bombPosition = holder == 1 ? 0.8 : 0.2
+                    bombPosition = holder == 1 ? 0.6 : 0.35
                 }
                 animateBomb()
             }
@@ -101,33 +127,34 @@ struct GameView: View {
     private var controlButtons: some View {
         Group {
             // Pass buttons
-            SquareButton(callback: { gameLogic.passBomb() }, size: 20, label: gameLogic.passCooldownPlayerTwo == 0 ? "Pass" : String(gameLogic.passCooldownPlayerTwo))
-                .scaleEffect(x: -1, y: -1)
-                .offset(x: -130, y: -260)
-                .disabled(!gameLogic.canPass(for: 2) || isPaused || gameLogic.bombTimer == 0)
-
-            SquareButton(callback: { gameLogic.passBomb() }, size: 20, label: gameLogic.passCooldownPlayerOne == 0 ? "Pass" : String(gameLogic.passCooldownPlayerOne))
-                .offset(x: 130, y: 260)
-                .disabled(!gameLogic.canPass(for: 1) || isPaused || gameLogic.bombTimer == 0)
-
-            // Effect buttons
-            SquareButton(callback: { gameLogic.useEffect(player: 1) }, size: 15, label: "Effects")
-                .offset(x: -130, y: 260)
-                .disabled(gameLogic.bombHolder != 1 || gameLogic.p1EffectUsed)
-
-            SquareButton(callback: { gameLogic.useEffect(player: 2) }, size: 15, label: "Effects")
-                .scaleEffect(x: -1, y: -1)
-                .offset(x: 130, y: -260)
-                .disabled(gameLogic.bombHolder != 2 || gameLogic.p2EffectUsed)
-
-            // Top buttons
-            HintButton().offset(x: -150, y: 360)
-            Button{
-                pauseGame()
-            }label:{
-                SettingButton()
-            }.offset(x: 150, y: 360)
-
+            if !gameLogic.showExplosionModal {
+                SquareButton(callback: { gameLogic.passBomb() }, size: 20, label: gameLogic.passCooldownPlayerTwo == 0 ? "Pass" : String(gameLogic.passCooldownPlayerTwo))
+                    .scaleEffect(x: -1, y: -1)
+                    .offset(x: -130, y: -260)
+                    .disabled(!gameLogic.canPass(for: 2) || isPaused || gameLogic.bombTimer == 0)
+                
+                SquareButton(callback: { gameLogic.passBomb() }, size: 20, label: gameLogic.passCooldownPlayerOne == 0 ? "Pass" : String(gameLogic.passCooldownPlayerOne))
+                    .offset(x: 130, y: 260)
+                    .disabled(!gameLogic.canPass(for: 1) || isPaused || gameLogic.bombTimer == 0)
+                
+                // Effect buttons
+                SquareButton(callback: { gameLogic.useEffect(player: 1) }, size: 15, label: "Effects")
+                    .offset(x: -130, y: 260)
+                    .disabled(gameLogic.bombHolder != 1 || gameLogic.p1EffectUsed)
+                
+                SquareButton(callback: { gameLogic.useEffect(player: 2) }, size: 15, label: "Effects")
+                    .scaleEffect(x: -1, y: -1)
+                    .offset(x: 130, y: -260)
+                    .disabled(gameLogic.bombHolder != 2 || gameLogic.p2EffectUsed)
+                
+                // Top buttons
+                
+                Button{
+                    pauseGame()
+                }label:{
+                    SettingButton()
+                }.offset(x: 150, y: 360)
+            }
         }
     }
 
@@ -155,26 +182,44 @@ struct GameView: View {
                 .padding()
                 .background(Color.black.opacity(0.9))
                 .cornerRadius(20)
-                .zIndex(1) // Ensure modal appears on top
+                .zIndex(80) // Ensure modal appears on top
             }
         }
     }
 
     private var explosionModal: some View {
         Group {
+            let player1Win: Bool = gameLogic.bombHolder == 2 ? true : false
+        
             if gameLogic.showExplosionModal {
-                VStack(spacing: 20) {
-                    Text("\(gameLogic.explodedPlayerName) exploded!")
-                        .font(.title)
-                        .foregroundColor(.white)
-
-                    Button("Continue") { gameLogic.continueAfterExplosion() }
-                        .buttonStyle(GameButtonStyle())
-                }
-                .padding()
-                .background(Color.red.opacity(0.9))
-                .cornerRadius(20)
-                .zIndex(1)
+                
+                Text(player1Win ? "Win!" : "Exploded!")
+                    .font(Font.custom("ARCADECLASSIC", size: CGFloat(50)))
+                    .foregroundColor(player1Win ? .green : .red)
+                    .position(x: 250, y: 430)
+                
+                Text(player1Win ? "Exploded!" : "Win!")
+                    .font(Font.custom("ARCADECLASSIC", size: CGFloat(50)))
+                    .foregroundColor(player1Win ? .red : .green)
+                    .rotationEffect(.degrees(180))
+                    .position(x: 250, y: 340)
+                
+                
+                Image("explosion")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .position(
+                        x: 250,
+                        y: player1Win ? 220 : 550
+                    )
+                
+                SquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 2) }, size: 20, label: gameLogic.player2Ready ? "Stop" : "Start")
+                    .scaleEffect(x: -1, y: -1)
+                    .offset(x: -130, y: -260)
+                
+                SquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 1) }, size: 20, label: gameLogic.player1Ready ? "Stop" : "Start")
+                    .offset(x: 130, y: 260)
             }
         }
     }
@@ -240,7 +285,7 @@ struct PlayerView: View {
                 .frame(width: 200, height: 200)
                 .scaleEffect(x: isFlipped ? -1 : 1)
 
-            Text(player.name)
+            Text(player.selectedCharacter.name)
                 .font(.custom("ARCADECLASSIC", size: 32))
                 .foregroundColor(.white)
         }
@@ -340,29 +385,6 @@ struct SquareButton: View {
     }
 }
 
-struct HintButton: View {
-    var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            // Example content, replace with your own
-            Image(systemName: "questionmark")
-                .foregroundColor(.white)
-        }
-        .padding(0)
-        .frame(width: 50, height: 50, alignment: .center)
-        .background(
-            LinearGradient(
-                stops: [
-                    Gradient.Stop(color: Color(red: 0.99, green: 0.49, blue: 0.02), location: 0.00),
-                    Gradient.Stop(color: Color(red: 0.68, green: 0.33, blue: 0), location: 1.00),
-                ],
-                startPoint: UnitPoint(x: 0.5, y: 0),
-                endPoint: UnitPoint(x: 0.5, y: 1)
-            )
-        )
-        .cornerRadius(500) // This will make it a circle since width == height
-        .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
-    }
-}
 
 struct SettingButton: View {
     var body: some View {
@@ -420,4 +442,42 @@ struct GameBackground: View {
 
 #Preview {
     GameView(player1: Player(name: "Farid", selectedCharacter: Character(name: "Angel", imageName: "Angel", unlockTrophy: 2), lives: 2), player2: Player(name: "Kemas", selectedCharacter: Character(name: "Kemas", imageName: "Kemas", unlockTrophy: 2), lives: 2))
+}
+
+struct BombTimerIndicators: View {
+    var bombTimer: Int = 0
+    
+    var body: some View {
+        HStack{
+            Image("timer")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50)
+            Text("\(bombTimer)")
+                .font(Font.custom("ARCADECLASSIC", size: CGFloat(50)))
+        }
+        .padding(.vertical, 1)
+        .padding(.horizontal, 10)
+        .background(.white.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .position(x: 140, y: 450)
+        .rotationEffect(.degrees(180))
+        .zIndex(50)
+        
+        HStack{
+            Image("timer")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50)
+            Text("\(bombTimer)")
+                .font(Font.custom("ARCADECLASSIC", size: CGFloat(50)))
+        }
+        .padding(.vertical, 1)
+        .padding(.horizontal, 10)
+        .background(.white.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .position(x: 130, y: 450)
+        .rotationEffect(.degrees(0))
+        .zIndex(50)
+    }
 }

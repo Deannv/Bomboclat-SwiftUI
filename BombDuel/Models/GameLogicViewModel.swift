@@ -27,6 +27,9 @@ class GameLogicViewModel: ObservableObject {
     @Published var p1EffectUsed = false
     @Published var p2EffectUsed = false
 
+    @Published var player1Ready: Bool = false
+    @Published var player2Ready: Bool = false
+
     private var bombTickTimer: Timer?
     private var cooldownTimer: Timer?
     private var bombStartTime: Date?
@@ -45,6 +48,8 @@ class GameLogicViewModel: ObservableObject {
         passCooldownPlayerTwo = 0
 //        NotificationCenter.default.post(name: .updateHearts, object: [1: p1Hearts, 2: p2Hearts])
 //        NotificationCenter.default.post(name: .effectReset, object: nil)
+        player1Ready = false
+        player2Ready = false
 
         startBombTimer()
     }
@@ -162,13 +167,27 @@ class GameLogicViewModel: ObservableObject {
         showExplosionModal = true
     }
 
-    func continueAfterExplosion() {
-        showExplosionModal = false
-        if p1Hearts == 0 || p2Hearts == 0 {
-            NotificationCenter.default.post(name: .gameOver, object: p1Hearts > 0 ? 1 : 2)
-            rematch()
-        } else {
-            startGame()
+    func continueAfterExplosion(playerReady: Int = 1) {
+        
+        if playerReady == 1 && player1Ready{
+            player1Ready = false
+        }else if playerReady == 1 && !player1Ready{
+            player1Ready = true
+        }
+        
+        if playerReady == 2 && player2Ready{
+            player2Ready = false
+        }else if playerReady == 2 && !player2Ready{
+            player2Ready = true
+        }
+        
+        if player1Ready && player2Ready {
+            showExplosionModal = false
+            if p1Hearts == 0 || p2Hearts == 0 {
+                NotificationCenter.default.post(name: .gameOver, object: p1Hearts > 0 ? 1 : 2)
+            } else {
+                startGame()
+            }
         }
     }
 

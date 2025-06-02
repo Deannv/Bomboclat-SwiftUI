@@ -10,6 +10,7 @@ import SpriteKit // Perlu diimpor karena GameView menggunakannya
 
 
 struct HomeView: View {
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
     @State private var player1Character: Character?
     @State private var player2Character: Character?
     @State private var selectedIndex = 0 // Single or Double mode
@@ -38,7 +39,7 @@ struct HomeView: View {
                     // Player 1 character selection (only visible in Single mode or initial character select)
                     if selectedIndex == 0 {
                         VStack {
-                            Text("Player 1")
+                            Text("Player")
                                 .font(.custom("ARCADECLASSIC", size: 20))
                                 .foregroundColor(.white)
 
@@ -62,9 +63,8 @@ struct HomeView: View {
                         }
                     }
 
-
                     Spacer()
-                        .frame(height: 0)
+                        .frame(height: 20)
 
                     // Single/Double selector
                     SelectorView(options: options, currentIndex: $selectedIndex) { index in
@@ -106,8 +106,41 @@ struct HomeView: View {
                 .navigationDestination(isPresented: $navigateToCharacterSelect) {
                     CharacteSelectView()
                 }
+                
+                Button{
+                    hasSeenOnboarding = false
+                }label:{
+                    HintButton()
+                }
+                .offset(x: 150, y: -360)
+                
             }
         }
+    }
+}
+
+
+struct HintButton: View {
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            // Example content, replace with your own
+            Image(systemName: "questionmark")
+                .foregroundColor(.white)
+        }
+        .padding(0)
+        .frame(width: 50, height: 50, alignment: .center)
+        .background(
+            LinearGradient(
+                stops: [
+                    Gradient.Stop(color: Color(red: 0.99, green: 0.49, blue: 0.02), location: 0.00),
+                    Gradient.Stop(color: Color(red: 0.68, green: 0.33, blue: 0), location: 1.00),
+                ],
+                startPoint: UnitPoint(x: 0.5, y: 0),
+                endPoint: UnitPoint(x: 0.5, y: 1)
+            )
+        )
+        .cornerRadius(500) // This will make it a circle since width == height
+        .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 4)
     }
 }
 
