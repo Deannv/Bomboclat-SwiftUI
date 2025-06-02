@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import SpriteKit // Perlu diimpor karena GameView menggunakannya
+
 
 struct HomeView: View {
     @State private var player1Character: Character?
@@ -14,6 +16,7 @@ struct HomeView: View {
     @State private var selectedCharacterIndex1 = 0 // Player 1 character
     @State private var selectedCharacterIndex2 = 0 // Player 2 character or CPU/PvP
     @State private var navigateToGame = false
+    @State private var navigateToCharacterSelect = false
 
     let options = ["Single", "Double"]
     let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan", "Charlie", "Emma", "Frea"]
@@ -23,60 +26,62 @@ struct HomeView: View {
             ZStack {
                 BackGroundImg()
 
-                // Back button image (non-functional)
-//                Image("Back-Button")
-//                    .resizable()
-//                    .frame(width: 31, height: 31)
-//                    .offset(x: -160, y: -330)
-//
                 // Main content
                 VStack {
                     Spacer()
                         .frame(height: 80)
-                    
+
                     Text("Bomboclat")
                         .font(.custom("ARCADECLASSIC", size: 24))
                         .foregroundColor(.white)
-                    
-                    // Player 1 character selection
-                    VStack {
-                        Text("Player 1")
-                            .font(.custom("ARCADECLASSIC", size: 20))
-                            .foregroundColor(.white)
-                        
-                        CharacterView(
-                            selectedIndex: $selectedIndex,
-                            selectedCharacterIndex: $selectedCharacterIndex1,
-                            characterOptions: characterOptions,
-                            selectedCharacter: $player1Character
-                        )
-                    }
-                    
-                    
-                    
-                    // CPU/PvP selector for Double mode
-                    if selectedIndex == 1 {
-                        SelectorView(options: ["CPU", "PvP"], currentIndex: $selectedCharacterIndex2) { index in
-                            print("Selected index: \(index)")
+
+                    // Player 1 character selection (only visible in Single mode or initial character select)
+                    if selectedIndex == 0 {
+                        VStack {
+                            Text("Player 1")
+                                .font(.custom("ARCADECLASSIC", size: 20))
+                                .foregroundColor(.white)
+
+                            CharacterView(
+                                selectedIndex: $selectedIndex,
+                                selectedCharacterIndex: $selectedCharacterIndex1,
+                                characterOptions: characterOptions,
+                                selectedCharacter: $player1Character
+                            )
+                        }
+                    } else {
+                        // Display default character for Player 1 when in Double mode (actual selection in CharacterSelectView)
+                        VStack {
+                            Text("Player 1")
+                                .font(.custom("ARCADECLASSIC", size: 20))
+                                .foregroundColor(.white)
+                            Image(characterOptions[selectedCharacterIndex1])
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 350, height: 350)
                         }
                     }
-                    
 
-                    
+
+                    Spacer()
+                        .frame(height: 0)
+
                     // Single/Double selector
                     SelectorView(options: options, currentIndex: $selectedIndex) { index in
                         print("Selected mode: \(options[index])")
-                        player2Character = nil
-                        selectedCharacterIndex2 = 0
+                        player2Character = nil // Reset player2 character when mode changes
+                        selectedCharacterIndex2 = 0 // Reset player2 index
                     }
-                    
-                 
-                    
+
                     Spacer()
-                        .frame(height: 0)
+
                     // Continue button
                     Button(action: {
-                        navigateToGame = true
+                        if selectedIndex == 0 { // Single Player
+                            navigateToGame = true
+                        } else { // Double Player, navigate to CharacterSelectView
+                            navigateToCharacterSelect = true
+                        }
                     }) {
                         Image("Next Button")
                             .resizable()
@@ -87,15 +92,19 @@ struct HomeView: View {
 
                 }
                 .padding()
-                // Modern navigation destination with safe fallback for preview
+                // Navigation destination for Single Player mode
                 .navigationDestination(isPresented: $navigateToGame) {
                     GameView(
-                        player1: Player(name: "Player 1", selectedCharacter: player1Character ?? Character(name: "Default", imageName: "DefaultChara", unlockTrophy: 0)),
+                        player1: Player(name: "Player 1", selectedCharacter: player1Character ?? Character(name: characterOptions[selectedCharacterIndex1], imageName: characterOptions[selectedCharacterIndex1], unlockTrophy: 0)),
                         player2: Player(
-                            name: selectedIndex == 0 ? "CPU" : "Player 2",
-                            selectedCharacter: selectedIndex == 0 ? Character(name: characterOptions.randomElement() ?? "Default", imageName: characterOptions.randomElement() ?? "DefaultChara", unlockTrophy: 0) : player2Character ?? Character(name: "Default", imageName: "DefaultChara", unlockTrophy: 0)
+                            name: "CPU",
+                            selectedCharacter: Character(name: characterOptions.randomElement() ?? "Default", imageName: characterOptions.randomElement() ?? "DefaultChara", unlockTrophy: 0)
                         )
                     )
+                }
+                // Navigation destination for CharacterSelectView (Multiplayer)
+                .navigationDestination(isPresented: $navigateToCharacterSelect) {
+                    CharacteSelectView()
                 }
             }
         }
@@ -107,12 +116,12 @@ struct BackGroundImg: View {
         // Background color
         Color(red: 0.99, green: 0.49, blue: 0.02)
             .ignoresSafeArea(edges: .all)
-        
+
         // Cloud images
         Image("blur-cloud")
             .scaledToFit()
             .offset(x: 0, y: -200)
-        
+
         Image("blur-cloud")
             .scaledToFit()
             .offset(x: -90, y: 200)
@@ -156,28 +165,29 @@ struct CharacterView: View {
                     .offset(x: selectedIndex == 1 ? -90 : 0)
                     .scaleEffect(selectedIndex == 1 ? 0.75 : 1.0)
                     .animation(.spring(response: 0.4, dampingFraction: 0.4), value: selectedIndex)
-                
-                // Player 2 character
-                if selectedIndex == 1 {
-                    Image("DefaultChara")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: imageSize.width, height: imageSize.height) // <-- Use imageSize
-                        .transition(
-                            .asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .trailing).combined(with: .opacity)
-                            )
-                        )
-                        .scaleEffect(0.75)
-                        .offset(x: 90)
-                }
+
+                // Player 2 character (will be removed as it's handled in CharacterSelectView)
+                // if selectedIndex == 1 {
+                //     Image("DefaultChara")
+                //         .resizable()
+                //         .scaledToFit()
+                //         .frame(width: imageSize.width, height: imageSize.height)
+                //         .transition(
+                //             .asymmetric(
+                //                 insertion: .move(edge: .trailing).combined(with: .opacity),
+                //                 removal: .move(edge: .trailing).combined(with: .opacity)
+                //             )
+                //         )
+                //         .scaleEffect(0.75)
+                //         .offset(x: 90)
+                // }
             }
             .animation(.spring(response: 0.4, dampingFraction: 0.6), value: selectedIndex)
 
             Spacer().frame(height: 30)
-            
+
             // Character selector
+            // This SelectorView will now only be present when selectedIndex == 0 (Single Player)
             if selectedIndex == 0 {
                 SelectorView(options: characterOptions, currentIndex: $selectedCharacterIndex) { index in
                     print("Selected character: \(characterOptions[index])")
@@ -187,7 +197,6 @@ struct CharacterView: View {
         }
     }
 }
-
 
 
 struct SelectorView: View {
