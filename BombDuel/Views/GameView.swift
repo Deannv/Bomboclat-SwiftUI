@@ -156,14 +156,14 @@ struct GameView: View {
                     .disabled(!gameLogic.canPass(for: 1) || isPaused || gameLogic.bombTimer == 0)
                 
                 // Effect buttons
-                SquareButton(callback: { gameLogic.useEffect(player: 1) }, size: 15, label: "Effects")
-                    .offset(x: -130, y: 260)
-                    .disabled(gameLogic.bombHolder != 1 || gameLogic.p1EffectUsed)
-                
-                SquareButton(callback: { gameLogic.useEffect(player: 2) }, size: 15, label: "Effects")
-                    .scaleEffect(x: -1, y: -1)
-                    .offset(x: 130, y: -260)
-                    .disabled(gameLogic.bombHolder != 2 || gameLogic.p2EffectUsed)
+//                SquareButton(callback: { gameLogic.useEffect(player: 1) }, size: 15, label: "Effects")
+//                    .offset(x: -130, y: 260)
+//                    .disabled(gameLogic.bombHolder != 1 || gameLogic.p1EffectUsed)
+//                
+//                SquareButton(callback: { gameLogic.useEffect(player: 2) }, size: 15, label: "Effects")
+//                    .scaleEffect(x: -1, y: -1)
+//                    .offset(x: 130, y: -260)
+//                    .disabled(gameLogic.bombHolder != 2 || gameLogic.p2EffectUsed)
                 
                 // Top buttons
                 
@@ -232,12 +232,12 @@ struct GameView: View {
                         y: player1Win ? 220 : 550
                     )
                 
-                SquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 2) }, size: 20, label: gameLogic.player2Ready ? "Stop" : "Start")
+                DynamicSquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 2) }, size: 20, width: 90, label: gameLogic.player2Ready ? "Stop" : "Continue")
                     .scaleEffect(x: -1, y: -1)
-                    .offset(x: -130, y: -260)
+                    .offset(x: 130, y: -260)
                 
-                SquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 1) }, size: 20, label: gameLogic.player1Ready ? "Stop" : "Start")
-                    .offset(x: 130, y: 260)
+                DynamicSquareButton(callback: { gameLogic.continueAfterExplosion(playerReady: 1) }, size: 20, width: 90, label: gameLogic.player1Ready ? "Stop" : "Continue")
+                    .offset(x: -130, y: 260)
             }
         }
     }
