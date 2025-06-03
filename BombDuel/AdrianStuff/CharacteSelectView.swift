@@ -53,6 +53,8 @@ struct CharacteSelectView: View { // Pastikan nama struct konsisten
                 .scaleEffect(x: -1, y: -1)
                 .offset(x: 0, y: -200)
 
+                Seperator(imageName: "TrainTracks")
+                
                 // Player 2 selector (bottom)
                 CharacterViewForSelectScreen(
                     // selectedIndex: $selectedIndexForCarousel, // Jika CharacterViewForSelectScreen memerlukannya
@@ -117,22 +119,50 @@ struct CharacterViewForSelectScreen: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            HStack(spacing: 0) {
-                Button(action: {
-                    withAnimation(.easeInOut) {
-                        selectedCharacterIndex = max(selectedCharacterIndex - 1, 0)
-                        updateSelectedCharacter()
-                        scrollToSelected()
+          
+                ZStack {
+                    HStack {
+                        Button(action: {
+                            withAnimation(.easeInOut) {
+                                selectedCharacterIndex = max(selectedCharacterIndex - 1, 0)
+                                updateSelectedCharacter()
+                                scrollToSelected()
+                            }
+                        }) {
+                            Image("arrow-left-svg")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundColor(selectedCharacterIndex == 0 ? .gray : .blue)
+                                .opacity(selectedCharacterIndex == 0 ? 0.5 : 1.0) // Added opacity change
+                        }
+                        .disabled(selectedCharacterIndex == 0)
+                        .padding(.trailing, 5)
+
+                        
+                        
+                                            Spacer()
+                                                .frame(width: 180)
+                        Button(action: {
+                            withAnimation(.easeInOut) {
+                                selectedCharacterIndex = min(selectedCharacterIndex + 1, characterOptions.count - 1)
+                                updateSelectedCharacter()
+                                scrollToSelected()
+                            }
+                        }) {
+                            Image("arrow-right-svg")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundColor(selectedCharacterIndex == characterOptions.count - 1 ? .gray : .blue)
+                                .opacity(selectedCharacterIndex == characterOptions.count - 1 ? 0.5 : 1.0) // Added opacity change
+                        }
+                        .disabled(selectedCharacterIndex == characterOptions.count - 1)
+                        .padding(.leading, 5)
                     }
-                }) {
-                    Image("arrow-left-svg")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40)
-                        .foregroundColor(selectedCharacterIndex == 0 ? .gray : .blue)
                 }
-                .disabled(selectedCharacterIndex == 0)
-                .padding(.trailing, 5)
+                .offset(x: 0, y: 130)
+                .zIndex(1)
 
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -155,9 +185,9 @@ struct CharacterViewForSelectScreen: View {
                             }
                         }
                         // Padding agar kartu di tengah saat pertama kali muncul atau di ujung
-                        .padding(.horizontal, (UIScreen.main.bounds.width - imageSize.width - spacing * 2) / 2 )
+                        .padding(.horizontal, (UIScreen.main.bounds.width - imageSize.width ) )
                     }
-                    .frame(width: imageSize.width + spacing * 2) // Sesuaikan lebar ScrollView
+//                    .frame(width: imageSize.width + spacing * 2) // Sesuaikan lebar ScrollView
                     .onAppear {
                         scrollViewProxy = proxy
                         // Update karakter dan scroll saat pertama kali muncul
@@ -168,28 +198,13 @@ struct CharacterViewForSelectScreen: View {
                     }
                 }
 
-                Button(action: {
-                    withAnimation(.easeInOut) {
-                        selectedCharacterIndex = min(selectedCharacterIndex + 1, characterOptions.count - 1)
-                        updateSelectedCharacter()
-                        scrollToSelected()
-                    }
-                }) {
-                    Image("arrow-right-svg")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40)
-                        .foregroundColor(selectedCharacterIndex == characterOptions.count - 1 ? .gray : .blue)
-                }
-                .disabled(selectedCharacterIndex == characterOptions.count - 1)
-                .padding(.leading, 5) // Beri sedikit jarak dari carousel
-            }
+//
             .frame(maxWidth: .infinity) // Agar HStack mengisi lebar yang tersedia
 
             // Nama Karakter di bawah Carousel
             if let char = selectedCharacter {
                  Text(char.name)
-                    .font(.custom("ARCADECLASSIC", size: 20))
+                    .font(.custom("ARCADECLASSIC", size: 30))
                     .foregroundColor(.white)
                     .padding(.top, 5)
             }
@@ -228,7 +243,7 @@ struct CharacterCard: View {
             .opacity(isSelected ? 1.0 : 0.6)
             .shadow(color: isSelected ? .yellow.opacity(0.8) : .clear, radius: 10)
             .animation(.spring(), value: isSelected) // Menggunakan .spring() untuk animasi lebih halus
-            .cornerRadius(12)
+          
     }
 }
 
@@ -238,3 +253,4 @@ struct CharacteSelectView_Previews: PreviewProvider {
         CharacteSelectView()
     }
 }
+

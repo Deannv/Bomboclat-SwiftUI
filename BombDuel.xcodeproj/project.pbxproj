@@ -33,16 +33,32 @@
 		0479E7932DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Adrian-bomb-holder.gif",
+				"Angel-bomb-holder.gif",
 				ARCADECLASSIC.ttf,
-				Gameplay.ttf,
+				"Charlie-bomb-holder.gif",
+				"Emma-bomb-holder.gif",
+				"Farid-bomb-holder.gif",
+				"Frea-bomb-holder.gif",
+				"Javier-bomb-holder.gif",
+				"Nanda-bomb-holder.gif",
+				"Ravshan-bomb-holder.gif",
 			);
 			target = 040FBDB22DDAC6F200B1884D /* BombDuelTests */;
 		};
 		0479E7942DDD536F00F1716B /* Exceptions for "BombDuel" folder in "BombDuelUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Adrian-bomb-holder.gif",
+				"Angel-bomb-holder.gif",
 				ARCADECLASSIC.ttf,
-				Gameplay.ttf,
+				"Charlie-bomb-holder.gif",
+				"Emma-bomb-holder.gif",
+				"Farid-bomb-holder.gif",
+				"Frea-bomb-holder.gif",
+				"Javier-bomb-holder.gif",
+				"Nanda-bomb-holder.gif",
+				"Ravshan-bomb-holder.gif",
 			);
 			target = 040FBDBC2DDAC6F200B1884D /* BombDuelUITests */;
 		};
@@ -443,7 +459,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "kemas.BombDuel.ravshan-srdftghjk";
+				PRODUCT_BUNDLE_IDENTIFIER = "kemas.BombDuel.ravshan-srdftghjkjhjh";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -473,7 +489,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "kemas.BombDuel.ravshan-srdftghjk";
+				PRODUCT_BUNDLE_IDENTIFIER = "kemas.BombDuel.ravshan-srdftghjkjhjh";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
