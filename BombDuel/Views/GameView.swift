@@ -16,7 +16,7 @@ struct GameView: View {
     @State private var isPaused = false
     @State private var isMuted = false
     @State private var winnerPlayer: Player? = nil
-    @State private var bombPosition: CGFloat = 0.6
+    @State private var bombPosition: CGFloat = 0.57
     @StateObject private var gameLogic: GameLogicViewModel
 
     @State private var bombScale: CGFloat = 1.0
@@ -54,38 +54,26 @@ struct GameView: View {
                     .zIndex(2)
 
                 Spacer()
-                
-                Image("bomb")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .scaleEffect(bombScale)
-                    .rotationEffect(.degrees(bombRotation))
-                    .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
-                    .animation(.easeInOut(duration: 0.3), value: bombPosition)
-                    .zIndex(1)
 
-//                if gameLogic.bombTimer > 4 {
-//                    Image("bomb")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 100, height: 100)
-//                        .scaleEffect(bombScale)
-//                        .rotationEffect(.degrees(bombRotation))
-//                        .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
-//                        .animation(.easeInOut(duration: 0.3), value: bombPosition)
-//                        .zIndex(99)
-//                }else{
-//                    GifImageView("bomb-flash")
-//                        .scaledToFit()
-//                        .frame(width: 100, height: 100)
-//                        .scaleEffect(bombScale)
-//                        .rotationEffect(.degrees(bombRotation))
-//                        .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
-//                        .animation(.easeInOut(duration: 0.3), value: bombPosition)
-//                        .zIndex(99)
-//                }
-//                    
+                if !gameLogic.showExplosionModal {
+                    if gameLogic.bombTimer > 4 {
+                        Image("bomb")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .scaleEffect(bombScale)
+                            .rotationEffect(.degrees(bombRotation))
+                            .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
+                            .animation(.easeInOut(duration: 0.3), value: bombPosition)
+                            .zIndex(1)
+                    }else{
+                        GifImageView("bomb-flash", width: 260, height: 260)
+                            .rotationEffect(.degrees(bombRotation))
+                            .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
+                            .animation(.easeInOut(duration: 0.3), value: bombPosition)
+                            .zIndex(1)
+                    }
+                }
 
                 Spacer()
 
@@ -97,7 +85,7 @@ struct GameView: View {
                 ZStack {
                     GifImageView("\(player1.selectedCharacter.name)-bomb-holder", width: 200, height: 200)
                 }
-                .offset(x: 120, y: 30)
+                .offset(x: 120, y: 70)
                 .zIndex(1)
             }
             if gameLogic.bombHolder == 2 && !gameLogic.showExplosionModal {
@@ -105,7 +93,7 @@ struct GameView: View {
                     GifImageView("\(player2.selectedCharacter.name)-bomb-holder", width: 200, height: 200)
                        
                 }
-                .offset(x: 120, y: 10)
+                .offset(x: 120, y: 40)
                 .zIndex(1)
                 .rotationEffect(.degrees(180))
 
@@ -136,7 +124,8 @@ struct GameView: View {
         .onReceive(NotificationCenter.default.publisher(for: .bombHolderChanged)) { notification in
             if let holder = notification.object as? Int {
                 withAnimation {
-                    bombPosition = holder == 1 ? 0.6 : 0.35
+                    bombPosition = holder == 1 ? 0.57 : 0.43
+                    bombRotation = holder == 2 ? 180 : 0
                 }
                 animateBomb()
             }
@@ -195,22 +184,21 @@ struct GameView: View {
             if isPaused {
                 VStack(spacing: 20) {
                     Text("Paused")
-                        .font(.largeTitle)
+                        .font(.custom("ARCADECLASSIC", size: 28))
                         .foregroundColor(.white)
 
                     Button(action: toggleMute) {
                         Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                             .font(.title)
                     }
-
-                    Button("Resume") { resumeGame() }
-                        .buttonStyle(GameButtonStyle())
-
-                    Button("Exit") { presentationMode.wrappedValue.dismiss() }
-                        .buttonStyle(GameButtonStyle())
+                    
+                    HStack{
+                        DynamicSquareButton(callback: resumeGame, size: 18, width: 100, label: "Resume")
+                        DynamicSquareButton(callback: {presentationMode.wrappedValue.dismiss()}, size: 18, width: 100, label: "Exit")
+                    }
                 }
                 .padding()
-                .background(Color.black.opacity(0.9))
+                .background(.black.opacity(0.9))
                 .cornerRadius(20)
                 .zIndex(80) // Ensure modal appears on top
             }
@@ -400,7 +388,7 @@ struct SettingButton: View {
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
             // Example content, replace with your own
-            Image(systemName: "gear")
+            Image(systemName: "pause.fill")
                 .foregroundColor(.white)
 
         }
@@ -451,7 +439,7 @@ struct GameBackground: View {
 
 
 #Preview {
-    GameView(player1: Player(name: "Farid", selectedCharacter: Character(name: "Angel", imageName: "Angel", unlockTrophy: 2), lives: 2), player2: Player(name: "Kemas", selectedCharacter: Character(name: "Kemas", imageName: "Kemas", unlockTrophy: 2), lives: 2))
+    GameView(player1: Player(name: "Farid", selectedCharacter: Character(name: "Angel", imageName: "Angel", unlockTrophy: 2), lives: 2), player2: Player(name: "Kemas", selectedCharacter: Character(name: "Farid", imageName: "Kemas", unlockTrophy: 2), lives: 2))
 }
 
 struct BombTimerIndicators: View {

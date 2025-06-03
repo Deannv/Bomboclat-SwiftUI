@@ -16,6 +16,7 @@ struct GameOverView: View {
         VStack(spacing: 20) {
             Text("🎉 \(winner.name) Wins!")
                 .font(.custom("Gameplay", size: 14))
+                .foregroundStyle(.white)
 
             HStack {
                 DynamicSquareButton(callback: onRematch, size: 18, width: 85, label: "Rematch")
@@ -25,7 +26,7 @@ struct GameOverView: View {
 
         }
         .padding()
-        .background(.white.opacity(0.6))
+        .background(.black.opacity(0.9))
         .cornerRadius(12)
         .shadow(radius: 8)
     }
