@@ -15,16 +15,17 @@ struct GameOverView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text("🎉 \(winner.name) Wins!")
-                .font(.largeTitle)
+                .font(.custom("Gameplay", size: 14))
 
-            Button("Rematch", action: onRematch)
-                .padding()
+            HStack {
+                DynamicSquareButton(callback: onRematch, size: 18, width: 85, label: "Rematch")
+                
+                DynamicSquareButton(callback: onExit, size: 18, width: 85, label: "Exit")
+            }
 
-            Button("Back to Home", action: onExit)
-                .padding()
         }
         .padding()
-        .background(Color.white)
+        .background(.white.opacity(0.6))
         .cornerRadius(12)
         .shadow(radius: 8)
     }
@@ -32,5 +33,7 @@ struct GameOverView: View {
 
 
 #Preview {
-//    GameOverView()
+    GameOverView(
+        winner: Player(name: "Test Name", selectedCharacter: Character(name: "Ninja", imageName: "ninja", unlockTrophy: 3), lives: 3), onRematch: {return}, onExit: {return}
+    )
 }

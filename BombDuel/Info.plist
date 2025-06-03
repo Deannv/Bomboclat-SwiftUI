@@ -4,6 +4,7 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Gameplay.ttf</string>
 		<string>ARCADECLASSIC.ttf</string>
 	</array>
 </dict>

@@ -34,6 +34,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ARCADECLASSIC.ttf,
+				Gameplay.ttf,
 			);
 			target = 040FBDB22DDAC6F200B1884D /* BombDuelTests */;
 		};
@@ -41,6 +42,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ARCADECLASSIC.ttf,
+				Gameplay.ttf,
 			);
 			target = 040FBDBC2DDAC6F200B1884D /* BombDuelUITests */;
 		};

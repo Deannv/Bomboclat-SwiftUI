@@ -19,7 +19,7 @@ struct Onboarding: View {
     
     var descriptions = [
         "Pass the bomb to your opponent, guess the timer in your head, and try to distract them. If the bomb explodes in your hands, you lose.",
-        "There's cooldown to each pass! and yes it's random.",
+        "There's cooldown to each pass! and yes it's random. Be aware of random timer during the gameplay!",
         "We encourage you to play with friends :)"
     ]
     
