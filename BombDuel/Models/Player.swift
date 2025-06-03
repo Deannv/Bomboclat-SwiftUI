@@ -12,4 +12,7 @@ struct Player: Identifiable {
     var name: String
     var selectedCharacter: Character
     var lives: Int = 3
+    
+   
+    
 }

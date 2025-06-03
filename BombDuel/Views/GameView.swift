@@ -7,6 +7,7 @@
 import SwiftUI
 import SpriteKit
 
+
 struct GameView: View {
     @Environment(\.presentationMode) var presentationMode
     var player1: Player
@@ -50,6 +51,7 @@ struct GameView: View {
                 PlayerView(player: player2, isFlipped: true)
                     .offset(y: -80)
                     .rotationEffect(.degrees(180))
+                    .zIndex(2)
 
                 Spacer()
                 
@@ -61,7 +63,7 @@ struct GameView: View {
                     .rotationEffect(.degrees(bombRotation))
                     .offset(y: bombPosition * UIScreen.main.bounds.height - UIScreen.main.bounds.height/2)
                     .animation(.easeInOut(duration: 0.3), value: bombPosition)
-                    .zIndex(99)
+                    .zIndex(1)
 
 //                if gameLogic.bombTimer > 4 {
 //                    Image("bomb")
@@ -89,13 +91,33 @@ struct GameView: View {
 
                 PlayerView(player: player1, isFlipped: false)
                     .offset(y: -70)
+                    .zIndex(2)
             }
+            if gameLogic.bombHolder == 1 && !gameLogic.showExplosionModal {
+                ZStack {
+                    GifImageView("\(player1.selectedCharacter.name)-bomb-holder", width: 200, height: 200)
+                }
+                .offset(x: 120, y: 30)
+                .zIndex(1)
+            }
+            if gameLogic.bombHolder == 2 && !gameLogic.showExplosionModal {
+                ZStack {
+                    GifImageView("\(player2.selectedCharacter.name)-bomb-holder", width: 200, height: 200)
+                       
+                }
+                .offset(x: 120, y: 10)
+                .zIndex(1)
+                .rotationEffect(.degrees(180))
+
+
+            }
+
             
             if gameLogic.showBombTimer {
                 BombTimerIndicators(bombTimer: gameLogic.bombTimer)
             }
 
-            TrainTrackView()
+            Seperator(imageName: "TrainTracks")
 
             HeartsView(count: gameLogic.p1Hearts)
                 .offset(y: 350)
@@ -118,6 +140,13 @@ struct GameView: View {
                 }
                 animateBomb()
             }
+//            if gameLogic.bombHolder == 1 {
+//                ZStack {
+//                    Image("Kemas")
+//                }
+//                .offset(x: -100, y: -100)
+//            }
+
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -156,6 +185,7 @@ struct GameView: View {
                 }.offset(x: 150, y: 360)
             }
         }
+        .zIndex(3)
     }
 
     // MARK: - Modals
@@ -305,28 +335,6 @@ struct GameButtonStyle: ButtonStyle {
 }
 
 
-struct TrainTrackView: View {
-    let imageWidth: CGFloat = 25
-    let screenWidth = UIScreen.main.bounds.width
-    let imageCount: Int
-
-    init() {
-        self.imageCount = Int(ceil(screenWidth / imageWidth)) + 3
-    }
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(0..<imageCount, id: \.self) { _ in
-                Image("TrainTracks")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: imageWidth)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
 struct HeartsView: View {
     let count: Int
 
@@ -380,10 +388,12 @@ struct SquareButton: View {
                     .foregroundColor(.white)
                     .padding(CGFloat(size))
             }
+           
 
         }
     }
 }
+  
 
 
 struct SettingButton: View {

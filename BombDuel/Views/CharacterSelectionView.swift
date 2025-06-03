@@ -48,6 +48,7 @@ struct CharacterSelectionView: View {
                                     alignment: .bottom
                                 )
                             Text(character.name)
+                              
                         }
                     }
                     .disabled(isLocked)
@@ -61,4 +62,5 @@ struct CharacterSelectionView: View {
 
 #Preview {
 //    CharacterSelectionView()
+    
 }

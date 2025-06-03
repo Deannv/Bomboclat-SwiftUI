@@ -19,7 +19,7 @@ struct HomeView: View {
     @State private var navigateToGame = false
     @State private var navigateToCharacterSelect = false
 
-    let options = ["Single", "Double"]
+    let options = ["1P", "2P"]
     let characterOptions = ["Angel", "Kemas", "Farid", "Javier", "Adrian", "Nanda", "Ravshan", "Charlie", "Emma", "Frea"]
 
     var body: some View {
@@ -36,35 +36,36 @@ struct HomeView: View {
                         .font(.custom("ARCADECLASSIC", size: 24))
                         .foregroundColor(.white)
 
-                    // Player 1 character selection (only visible in Single mode or initial character select)
                     if selectedIndex == 0 {
-                        VStack {
-                            Text("Player")
-                                .font(.custom("ARCADECLASSIC", size: 20))
-                                .foregroundColor(.white)
-
-                            CharacterView(
-                                selectedIndex: $selectedIndex,
-                                selectedCharacterIndex: $selectedCharacterIndex1,
-                                characterOptions: characterOptions,
-                                selectedCharacter: $player1Character
-                            )
-                        }
-                    } else {
-                        // Display default character for Player 1 when in Double mode (actual selection in CharacterSelectView)
-                        VStack {
-                            Text("Player 1")
-                                .font(.custom("ARCADECLASSIC", size: 20))
-                                .foregroundColor(.white)
-                            Image(characterOptions[selectedCharacterIndex1])
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 350, height: 350)
-                        }
+                        Text("Player")
+                            .font(.custom("ARCADECLASSIC", size: 20))
+                            .foregroundColor(.white)
+                    }
+                    if selectedIndex == 1 {
+                        Text("Player 1 / Player 2")
+                            .font(.custom("ARCADECLASSIC", size: 20))
+                            .foregroundColor(.white)
+                    }
+                    
+                    VStack {
+                     
+                        CharacterView(
+                            selectedIndex: $selectedIndex,
+                            selectedCharacterIndex: $selectedCharacterIndex1,
+                            characterOptions: characterOptions,
+                            selectedCharacter: $player1Character
+                        )
                     }
 
-                    Spacer()
-                        .frame(height: 20)
+                    
+                    if selectedIndex == 1 {
+                        SelectorView(options: ["CPU", "PvP"], currentIndex: $selectedCharacterIndex2) { index in
+                            print("Selected index: \(index)")
+                        }
+                    }
+                    
+
+          
 
                     // Single/Double selector
                     SelectorView(options: options, currentIndex: $selectedIndex) { index in
@@ -74,6 +75,7 @@ struct HomeView: View {
                     }
 
                     Spacer()
+                       
 
                     // Continue button
                     Button(action: {
@@ -199,21 +201,20 @@ struct CharacterView: View {
                     .scaleEffect(selectedIndex == 1 ? 0.75 : 1.0)
                     .animation(.spring(response: 0.4, dampingFraction: 0.4), value: selectedIndex)
 
-                // Player 2 character (will be removed as it's handled in CharacterSelectView)
-                // if selectedIndex == 1 {
-                //     Image("DefaultChara")
-                //         .resizable()
-                //         .scaledToFit()
-                //         .frame(width: imageSize.width, height: imageSize.height)
-                //         .transition(
-                //             .asymmetric(
-                //                 insertion: .move(edge: .trailing).combined(with: .opacity),
-                //                 removal: .move(edge: .trailing).combined(with: .opacity)
-                //             )
-                //         )
-                //         .scaleEffect(0.75)
-                //         .offset(x: 90)
-                // }
+                 if selectedIndex == 1 {
+                     Image("DefaultChara")
+                         .resizable()
+                         .scaledToFit()
+                         .frame(width: imageSize.width, height: imageSize.height)
+                         .transition(
+                             .asymmetric(
+                                 insertion: .move(edge: .trailing).combined(with: .opacity),
+                                 removal: .move(edge: .trailing).combined(with: .opacity)
+                             )
+                         )
+                         .scaleEffect(0.75)
+                         .offset(x: 90)
+                 }
             }
             .animation(.spring(response: 0.4, dampingFraction: 0.6), value: selectedIndex)
 
