@@ -37,7 +37,7 @@ struct Onboarding: View {
                 
                 VStack (spacing: 20){
                     Text(titles[currentIndex])
-                    .font(.custom("ARCADECLASSIC", size: 38))
+                    .font(.custom("SFProDisplay-Bold", size: 38))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     
