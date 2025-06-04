@@ -14,7 +14,7 @@ class SoundManager {
     private var isMuted = false
 
     func playBackgroundMusic() {
-        guard !isMuted, let url = Bundle.main.url(forResource: "bgmusic", withExtension: "mp3") else { return }
+        guard !isMuted, let url = Bundle.main.url(forResource: "backsound", withExtension: "mp3") else { return }
 
         do {
             player = try AVAudioPlayer(contentsOf: url)
